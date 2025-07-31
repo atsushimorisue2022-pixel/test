@@ -40,95 +40,74 @@ def tell_me_a_joke(lang, audiofile):
     gtts.gTTS(joke.strip(), lang=lang).save(audiofile)
 
 
-def what_day_is_it(lang, audiofile):
-    '''
-    Tell me what day it is.
+import datetime
+import gtts
 
-    @params:
-    lang (str) - language in which to record the date
-    audiofile (str) - filename in which to read the date
-    
-    @returns:
-    url (str) - URL that you can look up in order to see the calendar for this month and year
-    '''
-    #raise RuntimeError("You need to write this part!")
+def what_day_is_it(lang, audiofile):
     today = datetime.date.today()
     year = today.year
     month = today.month
     day = today.day
     weekday = today.isoweekday()
-    
-    if lang=="en":
-        weekdays=['','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
-        months=['','January','February','March','April','May','June','July','August','September','October','November','December']
-        text = "%s, %s %d, %d"%(weekdays[weekday],months[month],day,year)
-        gtts.gTTS("Today is "+text,lang="en").save(audiofile)
-    elif lang=="ja":
-        weekdays=' 月火水木金土日'
-        text="%s曜日,%d月%d日, %d年"%(weekdays[weekday],month,day,year)
-        gtts.gTTS("今日は"+text,lang="ja").save(audiofile)
-    elif lang=="zh":
-        weekdays=['','周一','周二','周三','周四','周五','周六','星期日']
-        text='%s, %d月%d日, %d年'%(weekdays[weekday],month,day,year)
-        gtts.gTTS("今天是"+text,lang="zh").save(audiofile)
+
+    if lang == "en":
+        weekdays = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        months = [' ', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        text = "%s, %s %d, %d" % (weekdays[weekday], months[month], day, year)
+        gtts.gTTS("Today is " + text, lang="en").save(audiofile)
+
+    elif lang == "ja":
+        weekdays = '月火水木金土日'
+        text = "%s曜日, %d月%d日, %d年" % (weekdays[weekday - 1], month, day, year)
+        gtts.gTTS("今日は" + text, lang="ja").save(audiofile)
+
+    elif lang == "zh":
+        weekdays = ['', '周一', '周二', '周三', '周四', '周五', '周六', '周日']
+        text = "%s, %d月%d日, %d年" % (weekdays[weekday], month, day, year)
+        gtts.gTTS("今天是" + text, lang="zh").save(audiofile)
+
+    else:
+        raise ValueError("Unsupported language")
+
 
 def personal_assistant(lang, filename):
-    '''
-    Listen to the user, and respond to one of three types of requests:
-    What time is it?
-    What day is it?
-    Tell me a joke!
-    
-    @params:
-    lang (str) - language
-    filename (str) - filename in which to store the result
-    '''
-    #raise RuntimeError("You need to write this part!")
-    import speech_recognition as sr
-from gtts import gTTS
-
-lang = "ja"
-filename = "response.mp3"
-
-if lang == "en":
-    keywords = ["what time", "joke", "what day", "I'm sorry, I didn't understand you"]
-elif lang == "ja":
-    keywords = ["何時", "冗談", "何日", "すみません、よくわかりませんでした"]
-elif lang == "zh":
-    keywords = ["几点", "玩笑", "什么日子", "对不起，我没听懂你的话"]
-else:
-    gTTS("I don't know that language!", lang="en").save(filename)
-    exit()
-
-r = sr.Recognizer()
-
-while True:
-    print("Listening...")
-    with sr.Microphone() as source:
-        r.adjust_for_ambient_noise(source)
-        try:
-            audio = r.listen(source)
-            text = r.recognize_google(audio, language=lang)
-        except sr.UnknownValueError:
-            print("I did not understand that, I will try again")
-            continue
-        except sr.RequestError:
-            print("Sorry, I could not reach the internet, I will try again")
-            continue
-        except sr.WaitTimeoutError:
-            continue
-
-    print("I heard:", text)
-
-    if keywords[0] in text:
-        what_time_is_it(lang, filename)
-        break
-    elif keywords[1] in text:
-        tell_me_a_joke(lang, filename)
-        break
-    elif keywords[2] in text:
-        what_day_is_it(lang, filename)
-        break
+　　if lang == "en":
+   　  keywords = ["what time", "joke", "what day", "I'm sorry, I didn't understand you"]
+    elif lang == "ja":
+       keywords = ["何時", "冗談", "何日", "すみません、よくわかりませんでした"]
+    elif lang == "zh":
+       keywords = ["几点", "玩笑", "什么日子", "对不起，我没听懂你的话"]
     else:
-        print(keywords[3])
-        print("I will try again")
+      gtts.gTTS("I don't know that language!","en",filename)
+    return
+    r = speech_recognition.Recognizer()
+
+    while True:
+        print("Listening...")
+        with speech recognition.Microphone() as source:
+            r.adjust_for_ambient_noise(source)
+            try:
+               audio = r.listen(source)
+               text = r.recognize_google(audio, language=lang)
+            except sr.UnknownValueError:
+               print("I did not understand that, I will try again")
+               continue
+            except sr.RequestError:
+               print("Sorry, I could not reach the internet, I will try again")
+               continue
+            except sr.WaitTimeoutError:
+             continue
+
+       print("I heard:", text)
+       if keywords[0] in text:
+          what_time_is_it(lang, filename)
+          break
+       elif keywords[1] in text:
+          tell_me_a_joke(lang, filename)
+          break
+       elif keywords[2] in text:
+          what_day_is_it(lang, filename)
+          break
+       else:
+          print(keywords[3])
+          print("I will try again")
