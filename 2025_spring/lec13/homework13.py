@@ -16,12 +16,17 @@ def extract_stories_from_NPR_text(text):
     soup = bs4.BeautifulSoup(text, "html.parser")
     div_tags = soup.find_all('div', class_='story-text')
     stories = []
-    for div_tag in div_tags:
-        title_tag = div_tag.find('h3', class_='title')
-        teaser_tag = div_tag.find('p', class_='teaser')
-        if teaser_tag is None:
-           teaser = ' '
-    return stories
+
+for div_tag in div_tags:
+    title_tag = div_tag.find('h3', class_='title')
+    teaser_tag = div_tag.find('p', class_='teaser')
+
+    title = title_tag.text.strip() if title_tag else ''
+    teaser = teaser_tag.text.strip() if teaser_tag else ''
+
+    stories.append({'title': title, 'teaser': teaser})
+
+return stories
 
     
 def read_nth_story(stories, n, filename):
