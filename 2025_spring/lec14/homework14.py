@@ -96,7 +96,7 @@ def personal_assistant(lang, filename):
                print("Sorry, I could not reach the internet, I will try again")
                continue
             except sr.WaitTimeoutError:
-             continue
+               continue
 
        print("I heard:", text)
        if keywords[0] in text:
